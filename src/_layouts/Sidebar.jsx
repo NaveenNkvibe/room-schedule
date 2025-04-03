@@ -47,7 +47,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 	alignItems: 'center',
 	justifyContent: 'flex-end',
 	padding: theme.spacing(0, 1),
-	background: '#213547',
+	background: '#202020',
 
 	...theme.mixins.toolbar,
 }));
@@ -60,7 +60,7 @@ const AppBar = styled(MuiAppBar, {
 		easing: theme.transitions.easing.sharp,
 		duration: theme.transitions.duration.leavingScreen,
 	}),
-	background: '#213547',
+	background: '#202020',
 	variants: [
 		{
 			props: ({ open }) => open,
