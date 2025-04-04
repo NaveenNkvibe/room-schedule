@@ -11,7 +11,7 @@ const modalStyle = {
     boxShadow: 24,
     p: 3,
     borderRadius: 2,
-};
+}; // Define styling for Modal
 
 function DeleteModal({ open, onClose, onSubmit }) {
 

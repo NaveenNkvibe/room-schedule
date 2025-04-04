@@ -11,24 +11,24 @@ const modalStyle = {
 	boxShadow: 24,
 	p: 3,
 	borderRadius: 2,
-};
+}; // Define styling for Modal
 
 function ShiftModal({ open, onClose, onSubmit, initialShift }) {
 
-    const [shiftName, setShiftName] = useState('');
+    const [shiftName, setShiftName] = useState(''); // State to store shift name
 
     useEffect(() => {
-		if (initialShift) setShiftName(initialShift.name);
-		else setShiftName('');
+		if (initialShift) setShiftName(initialShift.name); // If initialShift has data, Assign initialShift.name to shiftName
+		else setShiftName(''); // If initialShift has no data, Assign it empty
 	}, [initialShift]);
 
 	const handleSubmit = () => {
 		if (shiftName.trim()) {
-			onSubmit(shiftName);
-			setShiftName('');
-			onClose();
+			onSubmit(shiftName); // Pass shiftName through onSubmit
+			setShiftName(''); // Assign shiftName as empty
+			onClose(); // Call onClose
 		}
-	};
+	}; // Submit the Shift Name
 
     return (
 		<Modal open={open} onClose={onClose}>

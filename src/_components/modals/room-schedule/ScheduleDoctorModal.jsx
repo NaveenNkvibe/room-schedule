@@ -11,23 +11,23 @@ const modalStyle = {
     boxShadow: 24,
     p: 3,
     borderRadius: 2,
-};
+}; // Define styling for Modal
 
 function ScheduleDoctorModal({ open, onClose, onSubmit, onRemove, selectedDoctor }) {
 
-    const [scheduleDoctorName, setScheduleDoctorName] = useState('');
+    const [scheduleDoctorName, setScheduleDoctorName] = useState(''); // State to store doctor name
 
     useEffect(() => {
-		setScheduleDoctorName(selectedDoctor || '');
+		setScheduleDoctorName(selectedDoctor || ''); // If selectedDoctor has data, Assign to scheduleDoctorName, or set ''
 	}, [selectedDoctor]);
 
     const handleSubmit = () => {
         if (scheduleDoctorName.trim()) {
-            onSubmit(scheduleDoctorName);
-            setScheduleDoctorName('');
-            onClose();
-        }
-    };
+			onSubmit(scheduleDoctorName); // Pass doctor Name through onSubmit
+			setScheduleDoctorName(''); // Assign doctor Name as empty
+			onClose(); // Call onClose
+		}
+    }; // Submit the schedule doctor Data
 
     return (
 		<Modal open={open} onClose={onClose}>
