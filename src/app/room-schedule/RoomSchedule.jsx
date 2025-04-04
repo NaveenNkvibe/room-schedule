@@ -2,44 +2,43 @@ import React, { useState, useEffect } from 'react';
 import ScheduleDoctorModal from '../../_components/modals/room-schedule/ScheduleDoctorModal';
 
 const RoomSchedule = () => {
+	const [rooms, setRooms] = useState([]); // State to store room value
+	const [blocks, setBlocks] = useState([]); // State to store block value
+	const [shifts, setShifts] = useState([]); // State to store shift value
+	const [schedule, setSchedule] = useState({ weekStart: '', weekEnd: '', data: [] }); // State to store schedule data
+	const [modalOpen, setModalOpen] = useState(false); // Boolean value to open/close the Modal
+	const [selectedCell, setSelectedCell] = useState(null); // State to selected cell details
 
-    const [rooms, setRooms] = useState([]);
-	const [blocks, setBlocks] = useState([]);
-    const [shifts, setShifts] = useState([]);
-	const [schedule, setSchedule] = useState({ weekStart: '', weekEnd: '', data: [] });
-	const [modalOpen, setModalOpen] = useState(false);
-	const [selectedCell, setSelectedCell] = useState(null);
-
-	const days = ['Sunday', 'Monday', 'Wednesday', 'Thursday', 'Friday'];
+	const days = ['Sunday', 'Monday', 'Wednesday', 'Thursday', 'Friday']; // Define all days in week to an array
 
 	useEffect(() => {
-		const allRooms = JSON.parse(localStorage.getItem('rooms')) || [];
-		const allBlocks = JSON.parse(localStorage.getItem('blocks')) || [];
-        const allShifts = JSON.parse(localStorage.getItem('shifts')) || [];
+		const allRooms = JSON.parse(localStorage.getItem('rooms')) || []; // Fetch all rooms details from local storage, if not availabel return []
+		const allBlocks = JSON.parse(localStorage.getItem('blocks')) || []; // Fetch all blocks details from local storage, if not availabel return []
+		const allShifts = JSON.parse(localStorage.getItem('shifts')) || []; // Fetch all shifts details from local storage, if not availabel return []
 
-		const today = new Date();
-		const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
-		const lastDayOfWeek = new Date(today.setDate(firstDayOfWeek.getDate() + 6));
+		const today = new Date(); // Get date of today
+		const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay())); // Gets first day of this week
+		const lastDayOfWeek = new Date(today.setDate(firstDayOfWeek.getDate() + 6)); // Gets last day of this week
 
-		const formatDate = (date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+		const formatDate = (date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); // Make date to [4 Mar 2025] format
 
 		const currentWeek = {
 			weekStart: formatDate(firstDayOfWeek),
 			weekEnd: formatDate(lastDayOfWeek),
 			data: [],
-		};
-		console.log(currentWeek)
+		}; // Add to currentWeek object
+		//console.log(currentWeek);
 
-		const savedSchedule = JSON.parse(localStorage.getItem('RoomSchedule')) || currentWeek;
+		const savedSchedule = JSON.parse(localStorage.getItem('RoomSchedule')) || currentWeek; // Fetch all RoomSchedule details from local storage, if not assign currentWeek
 
-        const updatedBlocks = allBlocks.map((block) => ({
+		const updatedBlocks = allBlocks.map((block) => ({
 			...block,
 			roomCount: allRooms.filter((room) => room.blockId === block.id).length,
 		}));
 
 		setRooms(allRooms);
 		setBlocks(updatedBlocks);
-        setShifts(allShifts);
+		setShifts(allShifts);
 		setSchedule(savedSchedule);
 	}, []);
 
@@ -60,7 +59,6 @@ const RoomSchedule = () => {
 
 		let dayEntry = updatedSchedule.data.find((d) => d.day === selectedCell.day);
 		if (!dayEntry) {
-
 			const today = new Date();
 			const formattedDate = today.toLocaleDateString('en-GB').replace(/\//g, '-');
 
@@ -172,7 +170,6 @@ const RoomSchedule = () => {
 			<ScheduleDoctorModal open={modalOpen} onClose={handleModalClose} onSubmit={handleSaveDoctor} onRemove={handleRemoveDoctor} selectedDoctor={selectedCell?.doctor} />
 		</div>
 	);
-
 };
 
 export default RoomSchedule;
