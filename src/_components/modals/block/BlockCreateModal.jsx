@@ -11,23 +11,23 @@ const modalStyle = {
     boxShadow: 24,
     p: 3,
     borderRadius: 2,
-};
+}; // Define styling for Modal
 
 function BlockModal({ open, onClose, onSubmit, initialBlock }) {
 
-    const [blockName, setBlockName] = useState('');
+    const [blockName, setBlockName] = useState(''); // State to store Block name
 
     useEffect(() => {
-        if (initialBlock) setBlockName(initialBlock.name);
-        else setBlockName('');
-    }, [initialBlock]);
+		if (initialBlock) setBlockName(initialBlock.name); // If initialBlock has data, Assign initialBlock.name to BlockName
+		else setBlockName(''); // If initialBlock has no data, Assign it empty
+	}, [initialBlock]);
 
     const handleSubmit = () => {
         if (blockName.trim()) {
-            onSubmit(blockName);
-            setBlockName('');
-            onClose();
-        }
+			onSubmit(blockName); // Pass BlockName through onSubmit
+			setBlockName(''); // Assign BlockName as empty
+			onClose(); // Call onClose
+		}
     };
 
     return (

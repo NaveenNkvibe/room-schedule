@@ -6,12 +6,12 @@ import DeleteModal from '../modals/delete-modal/DeleteModal';
 
 function DataTable ({columns, data, onEdit, onDelete}) {
 
-    const [deleteShift, setDeleteShift] = useState(null);
+    const [deleteModalData, setDeleteModalData] = useState(null); // State to store delete
 
     function handleDelete () {
-        onDelete(deleteShift);
-		setDeleteShift(null);
-    }
+		onDelete(deleteModalData); // Call ondelete with data
+		setDeleteModalData(null); // Assign the value of deleteModalData as null
+	}
 
     return (
 		<>
@@ -52,7 +52,7 @@ function DataTable ({columns, data, onEdit, onDelete}) {
 												<IconButton onClick={() => onEdit(row)}>
 													<EditIcon />
 												</IconButton>
-												<IconButton onClick={() => setDeleteShift(row.id)}>
+												<IconButton onClick={() => setDeleteModalData(row.id)}>
 													<DeleteIcon />
 												</IconButton>
 											</Stack>
@@ -64,7 +64,7 @@ function DataTable ({columns, data, onEdit, onDelete}) {
 					</TableBody>
 				</Table>
 			</TableContainer>
-			<DeleteModal open={deleteShift !== null} onClose={() => setDeleteShift(null)} onSubmit={handleDelete}/>
+			<DeleteModal open={deleteModalData !== null} onClose={() => setDeleteModalData(null)} onSubmit={handleDelete}/>
 		</>
 	);
 }
