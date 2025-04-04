@@ -34,43 +34,45 @@ const RoomSchedule = () => {
 		const updatedBlocks = allBlocks.map((block) => ({
 			...block,
 			roomCount: allRooms.filter((room) => room.blockId === block.id).length,
-		}));
+		})); // Update Blocks data with rooms count
 
-		setRooms(allRooms);
-		setBlocks(updatedBlocks);
-		setShifts(allShifts);
-		setSchedule(savedSchedule);
+		setRooms(allRooms); // Assign all fetched room data to room state
+		setBlocks(updatedBlocks); // Assign all fetched blocks data to blocks state
+		setShifts(allShifts); // Assign all fetched shifts data to shifts state
+		setSchedule(savedSchedule); // Assign all fetched schedule data to schedule state
 	}, []);
 
 	const handleCellClick = (day, shift, room) => {
-		const dayData = schedule.data.find((d) => d.day === day);
-		const shiftData = dayData?.roomData.find((r) => r.roomId === room.id && r.shiftId === shift.id);
+		const dayData = schedule.data.find((d) => d.day === day); // Get schedule day data selected
+		const shiftData = dayData?.roomData.find((r) => r.roomId === room.id && r.shiftId === shift.id); // Get room and shift data
 
-		setSelectedCell({ day, shift, room, doctor: shiftData ? shiftData.doctor : '' });
-		setModalOpen(true);
+		setSelectedCell({ day, shift, room, doctor: shiftData ? shiftData.doctor : '' }); // Update scheduled cell state details
+		setModalOpen(true); // Open Doctor Update Modal
 	};
 
 	const handleSaveDoctor = (data) => {
 		if (!data || !selectedCell) {
 			return;
+		} // Return if there is not no doctorName in data or selected cell
+
+		const updatedSchedule = { ...schedule }; // Copy schedule data to updateSchedule variable
+
+		let dayEntry = updatedSchedule.data.find((d) => d.day === selectedCell.day); // Get day from schedule data
+		if (!dayEntry) { // Check if day exist in schedule data
+			const today = new Date(); // Get date of today
+			const formattedDate = today.toLocaleDateString('en-GB').replace(/\//g, '-'); // Convert date to 'DD-MM-YYYY' format
+
+			dayEntry = { day: selectedCell.day, date: formattedDate, roomData: [] }; // Create new dayEntry
+			updatedSchedule.data.push(dayEntry); // Push it to updateSchedule
 		}
 
-		const updatedSchedule = { ...schedule };
-
-		let dayEntry = updatedSchedule.data.find((d) => d.day === selectedCell.day);
-		if (!dayEntry) {
-			const today = new Date();
-			const formattedDate = today.toLocaleDateString('en-GB').replace(/\//g, '-');
-
-			dayEntry = { day: selectedCell.day, date: formattedDate, roomData: [] };
-			updatedSchedule.data.push(dayEntry);
-		}
-
-		const shiftEntry = dayEntry.roomData.find((r) => r.roomId === selectedCell.room.id && r.shiftId === selectedCell.shift.id);
+		const shiftEntry = dayEntry.roomData.find((r) => r.roomId === selectedCell.room.id && r.shiftId === selectedCell.shift.id); // Get Shift
 
 		if (shiftEntry) {
+			// If has shiftEntry update doctor name
 			shiftEntry.doctor = data;
 		} else {
+			// If not add new new data
 			dayEntry.roomData.push({
 				roomId: selectedCell.room.id,
 				shiftId: selectedCell.shift.id,
@@ -79,36 +81,37 @@ const RoomSchedule = () => {
 			});
 		}
 
-		setSchedule(updatedSchedule);
-		localStorage.setItem('RoomSchedule', JSON.stringify(updatedSchedule));
+		setSchedule(updatedSchedule); // Update schedule state
+		localStorage.setItem('RoomSchedule', JSON.stringify(updatedSchedule)); // Update roomSchedule data in local storage
 
-		setModalOpen(false);
+		setModalOpen(false); // Close Doctor Update Modal
 	};
 
 	const handleRemoveDoctor = () => {
-		if (!selectedCell) return;
+		if (!selectedCell) return; // Return if selectedCell is empty
 
-		const updatedSchedule = { ...schedule };
-		const dayEntry = updatedSchedule.data.find((d) => d.day === selectedCell.day);
+		const updatedSchedule = { ...schedule }; // Copy schedule data to updateSchedule variable
+		const dayEntry = updatedSchedule.data.find((d) => d.day === selectedCell.day); // Get day from schedule data
 
 		if (dayEntry) {
-			const roomIndex = dayEntry.roomData.findIndex((r) => r.roomId === selectedCell.room.id && r.shiftId === selectedCell.shift.id);
+			const roomIndex = dayEntry.roomData.findIndex((r) => r.roomId === selectedCell.room.id && r.shiftId === selectedCell.shift.id); // Find index of shift data inside dayEntry.roomData
 
 			if (roomIndex !== -1) {
+				// If it do not get index
 				dayEntry.roomData.splice(roomIndex, 1);
 			}
 
-			updatedSchedule.data = updatedSchedule.data.filter((d) => d.roomData.length > 0);
+			updatedSchedule.data = updatedSchedule.data.filter((d) => d.roomData.length > 0); // Remove data
 		}
 
-		setSchedule(updatedSchedule);
-		localStorage.setItem('RoomSchedule', JSON.stringify(updatedSchedule));
-		setModalOpen(false);
+		setSchedule(updatedSchedule); // Update schedule state
+		localStorage.setItem('RoomSchedule', JSON.stringify(updatedSchedule)); // Update roomSchedule data in local storage
+		setModalOpen(false); // Close Doctor Update Modal
 	};
 
 	const handleModalClose = () => {
-		setModalOpen(false);
-		setSelectedCell(null);
+		setModalOpen(false); // Close Doctor Update Modal
+		setSelectedCell(null); // clear selected cell data
 	};
 
 	return (
