@@ -6,10 +6,9 @@ const RoomSchedule = () => {
     const [rooms, setRooms] = useState([]);
 	const [blocks, setBlocks] = useState([]);
     const [shifts, setShifts] = useState([]);
-	const [schedule, setSchedule] = useState({ weekStart: '9 Feb 2025', weekEnd: '15 Feb 2025', data: [] });
+	const [schedule, setSchedule] = useState({ weekStart: '', weekEnd: '', data: [] });
 	const [modalOpen, setModalOpen] = useState(false);
 	const [selectedCell, setSelectedCell] = useState(null);
-	const [doctorName, setDoctorName] = useState('');
 
 	const days = ['Sunday', 'Monday', 'Wednesday', 'Thursday', 'Friday'];
 
@@ -17,7 +16,21 @@ const RoomSchedule = () => {
 		const allRooms = JSON.parse(localStorage.getItem('rooms')) || [];
 		const allBlocks = JSON.parse(localStorage.getItem('blocks')) || [];
         const allShifts = JSON.parse(localStorage.getItem('shifts')) || [];
-		const savedSchedule = JSON.parse(localStorage.getItem('RoomSchedule')) || { weekStart: '9 Feb 2025', weekEnd: '15 Feb 2025', data: [] };
+
+		const today = new Date();
+		const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+		const lastDayOfWeek = new Date(today.setDate(firstDayOfWeek.getDate() + 6));
+
+		const formatDate = (date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+		const currentWeek = {
+			weekStart: formatDate(firstDayOfWeek),
+			weekEnd: formatDate(lastDayOfWeek),
+			data: [],
+		};
+		console.log(currentWeek)
+
+		const savedSchedule = JSON.parse(localStorage.getItem('RoomSchedule')) || currentWeek;
 
         const updatedBlocks = allBlocks.map((block) => ({
 			...block,
@@ -47,7 +60,11 @@ const RoomSchedule = () => {
 
 		let dayEntry = updatedSchedule.data.find((d) => d.day === selectedCell.day);
 		if (!dayEntry) {
-			dayEntry = { day: selectedCell.day, date: '9-03-25', roomData: [] };
+
+			const today = new Date();
+			const formattedDate = today.toLocaleDateString('en-GB').replace(/\//g, '-');
+
+			dayEntry = { day: selectedCell.day, date: formattedDate, roomData: [] };
 			updatedSchedule.data.push(dayEntry);
 		}
 
@@ -91,14 +108,6 @@ const RoomSchedule = () => {
 		setModalOpen(false);
 	};
 
-	const getCellClass = (day, shift, room) => {
-		const dayData = schedule.data.find((d) => d.day === day);
-		if (!dayData) return 'available';
-
-		const shiftData = dayData.roomData.find((r) => r.roomId === room.id && r.shiftId === shift.id);
-		return shiftData && shiftData.doctor ? 'assigned' : 'available';
-	};
-
 	const handleModalClose = () => {
 		setModalOpen(false);
 		setSelectedCell(null);
@@ -123,7 +132,7 @@ const RoomSchedule = () => {
 						<th></th>
 						{rooms.map((room) => (
 							<React.Fragment key={room.id}>
-								<th style={{background: '#373a3b42'}}>{room.name}</th>
+								<th style={{ background: '#373a3b42' }}>{room.name}</th>
 							</React.Fragment>
 						))}
 					</tr>
@@ -132,7 +141,9 @@ const RoomSchedule = () => {
 					{days.map((day) => (
 						<React.Fragment key={day}>
 							<tr className="day-row">
-								<td colSpan="1" style={{background: '#393a3ba1'}}>{day}</td>
+								<td colSpan="1" style={{ background: '#393a3ba1' }}>
+									{day}
+								</td>
 								<td colSpan={rooms.length}></td>
 							</tr>
 
@@ -141,8 +152,8 @@ const RoomSchedule = () => {
 									<td>{shift.name}</td>
 									{rooms.map((room) => (
 										<td
-											key={`${day}-${shift.id}-${room.id}`}
-											className={getCellClass(day, shift, room)}
+											key={`${shift.id}-${room.id}`}
+											className={`${room.id}`}
 											onClick={() => handleCellClick(day, shift, room)}
 											style={{
 												backgroundColor: schedule.data.find((d) => d.day === day)?.roomData.find((r) => r.roomId === room.id && r.shiftId === shift.id)?.doctor ? 'green' : 'yellow',
